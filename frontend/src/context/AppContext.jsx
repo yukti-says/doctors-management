@@ -8,8 +8,10 @@ export const AppContext = createContext()
 //* context provider function
 const AppContextProvider = (props) => {
     //? whatever we gonna define in this value object that will be accessed by any component
+
+    const currencySymbol = '$'
     const value = {
-         doctors
+         doctors , currencySymbol
     }
     return (
         <AppContext.Provider value={value}>
