@@ -11,6 +11,8 @@ const Doctors = () => {
   //* get all data from context
   const { doctors } = useContext(AppContext)
   
+  //* state varibale for filtering the things
+  const [showFilter , setShowFilter] = useState(false)
   //* funtion to filter doctors
   //? doctors array pe filter method me ik doc varibale if on each doctor mean doc , doc.speciality === speciality then save set it in setFilterDoc or else just set all the doctors
   const applyFilter = () => {
@@ -35,7 +37,15 @@ const Doctors = () => {
     <div>
       <p className="text-gray-600">Browse through the doctors speciality</p>
       <div className="flex flex-col sm:flex-row items-start gap-5 mt-5">
-        <div className="  flex flex-col gap-4 text-sm text-gray-600">
+        <button
+          onClick={()=>setShowFilter(prev=>!prev)}
+          className={`py-1 px-3 border rounded text-sm transition-all sm:hidden ${showFilter ? 'bg-primary text-white' : ''}`}> Filter</button>
+        <div
+          className={` flex-col gap-4 text-sm text-gray-600
+            ${showFilter ? 'flex' : 'hidden sm:flex' }
+            `
+
+          }>
           <p
             onClick={() =>
               speciality === "General Physician"
