@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt'
 import { v2 as cloudinary } from "cloudinary"
 import { doctorModel } from "../models/doctorModels.js"
 import jwt from 'jsonwebtoken'
+import { DoctorsContext } from '../../admin/src/context/DoctorsContext.jsx'
 const addDoctor = async (req,res) => {
     try {
         const {
@@ -168,8 +169,22 @@ const loginAdmin = async (req, res) => {
     }
 
 }
-
-export {
-    addDoctor,
-    loginAdmin
+//? api controller to get all doctors list for admin panel 
+const allDoctor = async (req, res) => {
+    try {
+        const doctors = await doctorModel.find({}).select('-password') //* removing password 
+        res.json({
+            success: true,
+            doctors
+        })
+    }
+    catch (error) {
+         console.log(error);
+         res.json({
+           success: false,
+           message: error.message,
+         });
+    }
 }
+
+export { addDoctor, loginAdmin, allDoctor };
