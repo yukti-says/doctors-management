@@ -4,6 +4,7 @@ import "dotenv/config"
 import connectDB from './config/db.js'
 import connectCloudinary from './config/cloudinary.js'
 import { adminRouter } from './routes/adminRoute.js'
+import doctorRouter from './routes/doctorRoute.js'
 
 
 // app config
@@ -19,6 +20,8 @@ app.use(express.urlencoded({ extended: true }))
 
 //api endpoints
 app.use('/api/admin', adminRouter);
+
+app.use('/api/doctor',doctorRouter)
 
 
 const port = process.env.PORT || 5000

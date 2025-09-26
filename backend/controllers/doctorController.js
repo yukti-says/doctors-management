@@ -16,13 +16,33 @@ const changeAvailability = async (req,res) => {
     catch (error) {
         console.log(error);
         res.json({
-            success: true,
+            success: false,
             message:error.message
         })
         
     }
 }
 
+
+//? controller for getting all doctors for frontend
+const doctorList = async (req, res) => {
+    try {
+        const doctors = await doctorModel.find({}).select(['-email', '-password']) //^ by adding {} will get all the doctors
+        res.json({
+            success: true,
+            doctors
+        })
+    }
+    catch (error) {
+         console.log(error);
+         res.json({
+           success: false,
+           message: error.message,
+         });
+        
+    }
+}
 export {
-    changeAvailability
+    changeAvailability,
+    doctorList
 }
