@@ -21,6 +21,7 @@ app.use(express.urlencoded({ extended: true }))
 //api endpoints
 app.use('/api/admin', adminRouter);
 
+//api endpoint for doctor
 app.use('/api/doctor',doctorRouter)
 
 
