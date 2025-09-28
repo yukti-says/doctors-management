@@ -5,6 +5,7 @@ import connectDB from './config/db.js'
 import connectCloudinary from './config/cloudinary.js'
 import { adminRouter } from './routes/adminRoute.js'
 import doctorRouter from './routes/doctorRoute.js'
+import userRouter from './routes/userRoutes.js'
 
 
 // app config
@@ -24,6 +25,8 @@ app.use('/api/admin', adminRouter);
 //api endpoint for doctor
 app.use('/api/doctor',doctorRouter)
 
+//api for registering users
+app.use('/api/user',userRouter)
 
 const port = process.env.PORT || 5000
 
