@@ -2,6 +2,7 @@
 import validator from 'validator'
 import bcrypt from 'bcrypt'
 import userModel from '../models/userModel.js'
+import {v2 as cloudinary} from 'cloudinary'
 //? api for user registration
 const registerUser = async (req, res) => {
     try {
@@ -126,8 +127,56 @@ const getProfile = async (req,res)=>{
         
     }
 }
+
+//? controller to update the user profile
+
+const updateProfile = async (req, res) => {
+    try {
+        const { userId, name, phone, address, dob, gender } = req.body
+        const imageFile = req.imageFile
+        if (!name || !phone || !address || !dob || !gender) {
+            return res.json({
+                success: false,
+                message:"Data Missing"
+            })
+        }
+
+        await userModel.findByIdAndUpdate(userId, {
+            name,
+            phone,
+            address: JSON.parse(address),
+            dob,
+            gender
+        })
+
+        if (imageFile) {
+            //* uploading imaging to cloudinary
+            const imageUpload = await cloudinary.uploader.upload(imageFile.path, { resource_type: 'image' })
+            const imageUrl = imageUpload.secure_url
+
+            //*  now saving this url in the users database
+            await userModel.findByIdAndUpdate(userId,{image:imageUrl})
+        }
+
+
+        res.json({
+            success: true,
+            message:"profile updated"
+        })
+    }
+    catch (error) {
+         console.log(error);
+         res.json({
+           success: false,
+           message: error.message,
+         });
+        
+    }
+}
+
 export {
     registerUser,
     loginUser,
-    getProfile
+    getProfile,
+    updateProfile
 }

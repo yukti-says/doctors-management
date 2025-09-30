@@ -13,7 +13,7 @@ const authAdmin = async (req,res,next) => {
             })
         }
         //& decoding the token
-        const token_decode = JsonWebTokenError.verify(atoken, process.env.JWT_SECRET);
+        const token_decode = jwt.verify(atoken, process.env.JWT_SECRET);
 
         //& after getting the decoded token in token_Decode variable that is going to be our email and password so we will check this also
 
@@ -26,6 +26,7 @@ const authAdmin = async (req,res,next) => {
         }
 
         //& but if token match then simply call the next() callback function
+        next()
 
 
     }
