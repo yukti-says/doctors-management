@@ -9,7 +9,8 @@ const NavBar = () => {
   //* two state variables for menu showing and tokens
 
   const [showMenu, setShowMenu] = useState(false);
-  const {token , setToken} = useContext(AppContext)
+  //! userData for displaying the userProfile in navbar
+  const {token , setToken , userData} = useContext(AppContext)
 
   //? if have token thus we are logged in but if not so we are not logged in
   // const [token, setToken] = useState(true);
@@ -49,12 +50,12 @@ const NavBar = () => {
       </ul>
       <div className="flex items-center gap-4">
         {/*ternory logic */}
-        {token ? (
+        {token && userData ? (
           <div className="flex items-center gap-2 group relative ">
             <img
               onClick={() => navigate("/home")}
               className="w-8 rounded-full cursor-pointer"
-              src={assets.profile_pic}
+              src={userData.image}
               alt=""
             />
             <img
