@@ -103,6 +103,18 @@ const loginUser = async (req, res) => {
         
     }
 }
+
+//? new controller to get the user's profile data.api to get userprofile data
+
+const getProfile = async (req,res)=>{
+    try {
+        
+    }
+    catch (error)
+    {
+        
+    }
+}
 export {
     registerUser,
     loginUser
