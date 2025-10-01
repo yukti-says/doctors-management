@@ -1,83 +1,132 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import {  useNavigate, useParams } from 'react-router-dom'
 import {AppContext} from '../context/AppContext'
 import { assets } from '../assets/assets';
 import RelatedDoctors from '../components/RelatedDoctors';
+import { toast } from 'react-toastify';
+import axios from 'axios';
 
 const Appointment = () => {
   const { docId } = useParams();
-  const { doctors, currencySymbol } = useContext(AppContext);
-  const daysOfWeek = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
-  
-  
-  //*state variable to save the doc info 
-  const [docInfo, setDocInfo] = useState(null)
-  
+
+  //~ booking appointments logics
+  const { doctors, currencySymbol, backendUrl, token, getDoctorsData } =
+    useContext(AppContext);
+  const daysOfWeek = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+
+
+  const navigate = useNavigate()
+  //*state variable to save the doc info
+  const [docInfo, setDocInfo] = useState(null);
+
   //* state variables for dates and days
-  const [docSlots, setDocSlots] = useState([])
-  const [slotIndex, setSlotIndex] = useState(0)
-  const[slotTime , setSlotTime] = useState('')
+  const [docSlots, setDocSlots] = useState([]);
+  const [slotIndex, setSlotIndex] = useState(0);
+  const [slotTime, setSlotTime] = useState("");
 
   //* finding particular data from this docId in doctors
 
   const fetchDocInfo = async () => {
-    const docInfo = doctors.find(doc => doc._id === docId)
-    setDocInfo(docInfo)
+    const docInfo = doctors.find((doc) => doc._id === docId);
+    setDocInfo(docInfo);
     // console.log(docInfo);
-    
-  }
+  };
 
   //* we have to run the above function whenever our page gets load so using useEffect
 
   useEffect(() => {
-    fetchDocInfo()
-  }, [doctors, docId])
-  
+    fetchDocInfo();
+  }, [doctors, docId]);
 
   //* calculation slots
   const getAvailableSLots = async () => {
     //? clearing the previous slots
-    setDocSlots([])
+    setDocSlots([]);
     //? getting current date
-    let today = new Date()
-    for (let i = 0; i < 7; i++){
+    let today = new Date();
+    for (let i = 0; i < 7; i++) {
       //? getting the date with index
-      let currentDate = new Date(today)
-      currentDate.setDate(today.getDate() + i)
+      let currentDate = new Date(today);
+      currentDate.setDate(today.getDate() + i);
       //? setting end time of the date with index
-      let endTime = new Date()
-      endTime.setDate(today.getDate() + i)
-      endTime.setHours(21, 0, 0, 0)
-      
+      let endTime = new Date();
+      endTime.setDate(today.getDate() + i);
+      endTime.setHours(21, 0, 0, 0);
 
       // ? setting hours
       if (today.getDate() === currentDate.getDate()) {
-        currentDate.setHours(currentDate.getHours() > 10 ? currentDate.getHours() + 1 : 10)
-        currentDate.getMinutes(currentDate.getMinutes()>30?30:0)
+        currentDate.setHours(
+          currentDate.getHours() > 10 ? currentDate.getHours() + 1 : 10
+        );
+        currentDate.getMinutes(currentDate.getMinutes() > 30 ? 30 : 0);
       } else {
-        currentDate.setHours(10)
-        currentDate.setMinutes(0)
-
+        currentDate.setHours(10);
+        currentDate.setMinutes(0);
       }
-      let timeSlots = []
+      let timeSlots = [];
       while (currentDate < endTime) {
-        let formattedTime = currentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        let formattedTime = currentDate.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
         //? adding slots to array
         timeSlots.push({
           datetime: new Date(currentDate),
-          time:formattedTime
-        })
+          time: formattedTime,
+        });
         //? increament current time by 30 min
-        currentDate.setMinutes(currentDate.getMinutes()+30)
+        currentDate.setMinutes(currentDate.getMinutes() + 30);
       }
-      setDocSlots(prev=>([...prev , timeSlots]))
+      setDocSlots((prev) => [...prev, timeSlots]);
     }
+  };
 
-  }
 
-  useEffect(() => { getAvailableSLots() }, [docInfo])
-  useEffect(()=>{console.log(docSlots);
-  },[docSlots])
+
+  //~ function for appointment api calling
+  const bookAppointment = async () => {
+    if (!token) {
+      toast.warn("Login to Book Appointment")
+      return navigate('/login')
+    }
+    try {
+      const date = docSlots[slotIndex][0].datetime
+
+      let day = date.getDate()
+      //^ +1 so that the counting starts from 1 like jan 1 feb 2 etc etc
+      let month = date.getMonth()+1
+      let year = date.getFullYear()
+
+      const slotDate = day + "_" + month + "_" + year
+      
+      const { data } = await axios.post(backendUrl + '/api/users/book-appointment', { docId, slotDate, slotTime }, { headers: { token } })
+      
+      if (data.success) {
+        toast.success(data.message)
+        //^ fetch doctors data again to get doctors data updated
+        getDoctorsData()
+        navigate('/my-appointments')
+      }
+      else {
+        toast.error(data.message)
+      }
+
+
+    }
+    catch (error) {
+      console.log(error);
+      toast.error(error.message)
+      
+    }
+}
+
+
+  useEffect(() => {
+    getAvailableSLots();
+  }, [docInfo]);
+  useEffect(() => {
+    console.log(docSlots);
+  }, [docSlots]);
   return (
     docInfo && (
       <div>
@@ -160,11 +209,15 @@ const Appointment = () => {
                 </p>
               ))}
           </div>
-          <button className='bg-primary text-white text-sm font-light px-14 py-3 rounded-full my-6 ' >Book Appointment</button>
+          <button
+            onClick={bookAppointment}
+            className="bg-primary text-white text-sm font-light px-14 py-3 rounded-full my-6 ">
+            Book Appointment
+          </button>
         </div>
 
         {/* RELATED DOCTORS SECTIONS */}
-        <RelatedDoctors docId={docId} speciality={ docInfo.speciality} />
+        <RelatedDoctors docId={docId} speciality={docInfo.speciality} />
       </div>
     )
   );
