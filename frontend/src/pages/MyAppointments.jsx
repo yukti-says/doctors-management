@@ -6,7 +6,7 @@ import { toast } from 'react-toastify'
 import { useEffect } from 'react'
 
 const MyAppointments = () => {
-  const { token, backendUrl } = useContext(AppContext)
+  const { token, backendUrl,getDoctorsData } = useContext(AppContext)
   
   //* state variable to store the appointment data
   const [appointments, setAppointments] = useState([])
@@ -35,6 +35,28 @@ const MyAppointments = () => {
 
   }
 
+
+  //todo cancel appointments function
+  const cancelAppointment = async (appointmentId) => {
+    try {
+      const { data } = await axios.post(backendUrl + '/api/user/cancel-appointment', { appointmentId }, { headers: { token } })
+      if (data.success) {
+        toast.success(data.message)
+        getUsersAppointments()
+        getDoctorsData()
+
+      }
+      else {
+        toast.error(data.message)
+      }
+    }
+    catch (error) {
+      console.log(error);
+      toast.error(error.message)
+      
+    }
+  }
+
   //* this above function should run always whenever the page loaded
   useEffect(() => {
     if (token) {
@@ -53,10 +75,16 @@ const MyAppointments = () => {
             key={index}
           >
             <div>
-              <img className="w-32 bg-indigo-50" src={item.docData.image} alt="" />
+              <img
+                className="w-32 bg-indigo-50"
+                src={item.docData.image}
+                alt=""
+              />
             </div>
             <div className="flex-1 text-sm text-zinc-600">
-              <p className="text-neutral-800 font-semibold">{item.docData.name}</p>
+              <p className="text-neutral-800 font-semibold">
+                {item.docData.name}
+              </p>
               <p>{item.docData.speciality}</p>
               <p className="text-zinc-7000 font-medium mt-1"> Address:</p>
               <p className="text-xs">{item.docData.address.line1}</p>
@@ -65,18 +93,28 @@ const MyAppointments = () => {
                 <span className="text-sm text-neutral-700 font-medium">
                   Date & Time:
                 </span>
-               {slotDateFormat(item.slotDate)}| {item.slotTime}
+                {slotDateFormat(item.slotDate)}| {item.slotTime}
               </p>
             </div>
             <div></div>
             <div className="flex flex-col gap-2 justify-end">
-              <button className="text-sm text-stone-500 text-center sm:min-w-28 py-2 border rounded hover:bg-primary hover:text-white transition-all duration-300">
-                Pay Online
-              </button>
-              <button className="text-sm text-stone-500 text-center sm:min-w-28 py-2 px-7 border rounded hover:bg-red-500  hover:text-white transition-all duration-300">
-                {" "}
-                Cancel Appointment
-              </button>
+              {!item.cancelled && (
+                <button className="text-sm text-stone-500 text-center sm:min-w-28 py-2 border rounded hover:bg-primary hover:text-white transition-all duration-300">
+                  Pay Online
+                </button>
+              )}
+
+              {!item.cancelled && (
+                <button
+                  className="text-sm text-stone-500 text-center sm:min-w-28 py-2 px-7 border rounded hover:bg-red-500  hover:text-white transition-all duration-300"
+                  onClick={() => cancelAppointment(item._id)}
+                >
+                  {" "}
+                  Cancel Appointment
+                </button>
+              )}
+
+              {item.cancelled && <button className='sm:min-w-48 py-2 border border-red-500 rounded text-red-500'>Appointment canceled</button>}
             </div>
           </div>
         ))}
