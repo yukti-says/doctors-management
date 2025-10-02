@@ -6,7 +6,7 @@ import { AppContext } from '../../../../frontend/src/context/AppContext'
 import { assets } from '../../assets/assets'
 
 const AllAppointments = () => {
-  const { aToken, appointments, getAllAppointments , currency } = useContext(AdminContext)
+  const { aToken, appointments, getAllAppointments , currency , cancelAppointment } = useContext(AdminContext)
 
   const {calculateAge , slotDateFormat} = useContext(AppContext)
   
@@ -63,7 +63,8 @@ const AllAppointments = () => {
             {item.cancelled ? (
               <p className='text-red-400 text-xs font-medium'> Cancelled</p>
             ) : (
-              <img
+                <img
+                  onClick={()=>cancelAppointment(item._id)}
                 className="w-10 cursor-pointer"
                 src={assets.cancel_icon}
                 alt=""
