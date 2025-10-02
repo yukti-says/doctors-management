@@ -251,10 +251,35 @@ const bookAppointment = async (req, res) => {
     }
 }
 
+
+//* controller that will list all the appointments that user has booked on my appointment page
+const listAppointment = async (req,res) => {
+    try {
+        const { userId } = req.body
+        //* variable to store all the appointment list of the user
+        const appointments = await appointmentModel.find({ userId })
+        
+        res.json({
+            success: true,
+            appointments
+        })
+    }
+    catch (error) {
+        console.log(error);
+        res.json({
+            success: false,
+            message:error.message
+        })
+        
+    }
+}
+
+
 export {
     registerUser,
     loginUser,
     getProfile,
     updateProfile,
-    bookAppointment
+    bookAppointment,
+    listAppointment
 }
