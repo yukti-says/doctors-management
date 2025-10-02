@@ -5,6 +5,7 @@ import { v2 as cloudinary } from "cloudinary"
 import { doctorModel } from "../models/doctorModels.js"
 import jwt from 'jsonwebtoken'
 import { DoctorsContext } from '../../admin/src/context/DoctorsContext.jsx'
+import {appointmentModel} from '../models/appointmentsModel.js'
 const addDoctor = async (req,res) => {
     try {
         const {
@@ -187,4 +188,25 @@ const allDoctor = async (req, res) => {
     }
 }
 
-export { addDoctor, loginAdmin, allDoctor };
+//? controller for getting all appointments list
+const appointmentsAdmin = async (req, res) => {
+    try {
+        const appointments = await appointmentModel.find({}) //* this will give all the doctors 
+        res.json({
+            success: true,
+            appointments,
+          
+        })
+    }
+    catch (error) {
+        console.log(error);
+        res.json({
+            success: false,
+            message:error.message
+        })
+        
+        
+    }
+}
+
+export { addDoctor, loginAdmin, allDoctor,appointmentsAdmin };
