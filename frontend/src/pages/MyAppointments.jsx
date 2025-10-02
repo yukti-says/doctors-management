@@ -10,7 +10,14 @@ const MyAppointments = () => {
   
   //* state variable to store the appointment data
   const [appointments, setAppointments] = useState([])
+  //* date format
+  const months = [" ","Jan" , "Fab" , "Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
   
+
+  const slotDateFormat = (slotDate) => {
+    const dateArray = slotDate.split('_')
+    return dateArray[0]+" "+months[Number(dateArray[1])]+" "+dateArray[2]
+}
 
   const getUsersAppointments = async () => {
     try {
@@ -58,7 +65,7 @@ const MyAppointments = () => {
                 <span className="text-sm text-neutral-700 font-medium">
                   Date & Time:
                 </span>
-               {item.slotDate}| {item.slotTime}
+               {slotDateFormat(item.slotDate)}| {item.slotTime}
               </p>
             </div>
             <div></div>
