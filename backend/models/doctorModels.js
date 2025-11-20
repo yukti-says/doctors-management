@@ -1,69 +1,66 @@
-import mongoose, { mongo } from 'mongoose'
+import mongoose, { mongo } from "mongoose";
 
-const doctorSchema = new mongoose.Schema({
+const doctorSchema = new mongoose.Schema(
+  {
     name: {
-        type: String,
-        required: true,
-        
+      type: String,
+      required: true,
     },
     email: {
-        type: String,
-        required: true,
-        unique:true,
+      type: String,
+      required: true,
+      unique: true,
     },
     password: {
-        type: String,
-        required:true,
+      type: String,
+      required: true,
     },
     image: {
-        type: String,
-        required:true,
+      type: String,
+      required: true,
     },
     speciality: {
-        type: String,
-        required:true,
+      type: String,
+      required: true,
     },
     degree: {
-        type: String,
-        required:true,
+      type: String,
+      required: true,
     },
     experience: {
-        type: String,
-        required:true,
+      type: String,
+      required: true,
     },
     about: {
-        type: String,
-        required:true,
+      type: String,
+      required: true,
     },
     available: {
-        type: Boolean,
-        default:true,
+      type: Boolean,
+      default: true,
     },
     fee: {
-        type: Number,
-        required:true,
+      type: Number,
+      required: true,
     },
     address: {
-        type: Object,
-        required:true,
+      type: Object,
+      required: true,
     },
     date: {
-        type: Number,
-        required:true,
+      type: Number,
+      required: true,
     },
     slots_booked: {
-        type: Object,
-        default:{},
+      type: Object,
+      default: {},
     },
+  },
+  {
+    timestamps: true,
+    minimize: false, // this will make us store empty object
+  }
+);
 
-},
-    {
-    timestamps:true
-    },
-    {
-    minimize:false //! this will make us store empty object
-    })
-
-
-export const doctorModel = mongoose.models.doctor ||   mongoose.model('doctor', doctorSchema);
-
+export const doctorModel =
+  mongoose.models.doctor || mongoose.model("doctor", doctorSchema);
