@@ -2,9 +2,12 @@ import React from 'react'
 import { useContext , useNavigate} from 'react'
 import { AdminContext } from '../context/AdminContext'
 import { assets } from '../assets/assets'
+import { useState } from 'react'
+import { DoctorsContext } from '../context/DoctorsContext'
 
 const Navbar = () => {
-  const {aToken , setAToken} = useContext(AdminContext)
+  const { aToken, setAToken } = useContext(AdminContext)
+  const {dToken , setDToken} = useContext(DoctorsContext)
 
   const navigate = useNavigate()
 
@@ -12,6 +15,8 @@ const Navbar = () => {
     navigate('/')
     aToken && setAToken('')
     aToken && localStorage.removeItem('aToken')
+     dToken && setAToken("");
+     dToken && localStorage.removeItem("dToken");
   }
 
   return (
